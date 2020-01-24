@@ -15,6 +15,6 @@ public class RecipeConfiguration implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        this.dataLoader.loadData();
+        this.dataLoader.loadData2();
     }
 }

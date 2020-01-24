@@ -36,20 +36,9 @@ public class IndexController {
     }
 
     @RequestMapping({"/", "", "/index", "index.html"})
-    public String getIndexPage(){
+    public String getIndexPage(Model model){
 
-        log.info("In getIndexPage() method");
-        /*
-        Optional<Category> categoryOptional = categoryRepository.findByCategoryName("American");
-
-        Optional<UnitOfMeasure> unitOfMeasure = unitOfMeasureRepository.findByDescription("Teaspoon");
-
-        System.out.println("Cat Id is: " + categoryOptional.get().getId());
-        System.out.println("UOM Id is: "+ unitOfMeasure.get().getId());
-        */
-
-        System.out.println("This is a test");
-
+        model.addAttribute("recipes", recipeService.getAllRecipes());
         return "index";
     }
 
@@ -61,4 +50,10 @@ public class IndexController {
 
         return "recipes";
     }
+
+    @RequestMapping()
+    public String getRecipeById(Model model) {
+        return "recipe";
+    }
+
 }

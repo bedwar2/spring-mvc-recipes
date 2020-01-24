@@ -4,4 +4,6 @@ import guru.springframework.webmvcrecipes.domain.Recipe;
 
 public interface RecipeService {
     Iterable<Recipe> getAllRecipes();
+
+    Recipe findById(Long id);
 }
