@@ -1,5 +1,6 @@
 package guru.springframework.webmvcrecipes.services;
 
+import guru.springframework.webmvcrecipes.converters.*;
 import guru.springframework.webmvcrecipes.domain.Recipe;
 import guru.springframework.webmvcrecipes.repositories.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,9 @@ class RecipeServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        recipeService = new RecipeServiceImpl(recipeRepository);
+        RecipeCommandToRecipe recipeCommandToRecipe = new RecipeCommandToRecipe(new CategoryCommandToCategory(), new IngredientCommandToIngredient(new UnitOfMeasureCommandToUnitOfMeasure()), new NotesCommandToNotes());
+        RecipeToRecipeCommand recipeToRecipeCommand = new RecipeToRecipeCommand(new CategoryToCategoryCommand(), new IngredientToIngredientCommand(new UnitOfMeasureToUnitOfMeasureCommand()), new NotesToNotesCommand());
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
     }
 
     @Test

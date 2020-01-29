@@ -1,19 +1,29 @@
 package guru.springframework.webmvcrecipes.services;
 
+import guru.springframework.webmvcrecipes.commands.RecipeCommand;
+import guru.springframework.webmvcrecipes.converters.RecipeCommandToRecipe;
+import guru.springframework.webmvcrecipes.converters.RecipeToRecipeCommand;
 import guru.springframework.webmvcrecipes.domain.Recipe;
 import guru.springframework.webmvcrecipes.repositories.RecipeRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
+@Slf4j
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
-    private RecipeRepository recipeRepository;
+    private final RecipeRepository recipeRepository;
+    private final RecipeCommandToRecipe recipeCommandToRecipe;
+    private final RecipeToRecipeCommand recipeToRecipeCommand;
 
-    public RecipeServiceImpl(RecipeRepository recipeRepository) {
+    public RecipeServiceImpl(RecipeRepository recipeRepository, RecipeCommandToRecipe recipeCommandToRecipe, RecipeToRecipeCommand recipeToRecipeCommand) {
         this.recipeRepository = recipeRepository;
+        this.recipeCommandToRecipe = recipeCommandToRecipe;
+        this.recipeToRecipeCommand = recipeToRecipeCommand;
     }
 
     @Override
@@ -32,5 +42,22 @@ public class RecipeServiceImpl implements RecipeService {
         }
 
         return recipeOptional.get();
+    }
+
+    @Override
+    public Set<Recipe> getRecipes() {
+        Set<Recipe> recipes = new HashSet<>();
+
+        recipeRepository.findAll().forEach(o -> recipes.add(o));
+        return recipes;
+    }
+
+    @Override
+    public RecipeCommand saveRecipeCommand(RecipeCommand command) {
+        Recipe detachedRecipe = this.recipeCommandToRecipe.convert(command);
+
+        RecipeCommand recipeCommand =  this.recipeToRecipeCommand.convert(recipeRepository.save(detachedRecipe));
+        log.debug("Saved Recipe ID: " + recipeCommand.getId());
+        return recipeCommand;
     }
 }
