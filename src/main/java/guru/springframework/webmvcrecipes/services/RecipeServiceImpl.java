@@ -7,6 +7,7 @@ import guru.springframework.webmvcrecipes.domain.Recipe;
 import guru.springframework.webmvcrecipes.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -53,11 +54,18 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional
     public RecipeCommand saveRecipeCommand(RecipeCommand command) {
         Recipe detachedRecipe = this.recipeCommandToRecipe.convert(command);
 
         RecipeCommand recipeCommand =  this.recipeToRecipeCommand.convert(recipeRepository.save(detachedRecipe));
         log.debug("Saved Recipe ID: " + recipeCommand.getId());
         return recipeCommand;
+    }
+
+    @Override
+    @Transactional
+    public RecipeCommand findCommandById(Long id) {
+        return recipeToRecipeCommand.convert(this.findById(id));
     }
 }
