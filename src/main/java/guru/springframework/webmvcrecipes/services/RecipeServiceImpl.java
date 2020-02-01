@@ -68,4 +68,25 @@ public class RecipeServiceImpl implements RecipeService {
     public RecipeCommand findCommandById(Long id) {
         return recipeToRecipeCommand.convert(this.findById(id));
     }
+
+    @Override
+    public void deleteById(Long id) {
+        recipeRepository.deleteById(id);
+    }
+
+    @Override
+    public byte[] getImageByteArray(Byte[] imageBytes) {
+
+        if (imageBytes != null) {
+            byte[] imgBytes = new byte[imageBytes.length];
+            int i = 0;
+            for (Byte imgByte : imageBytes) {
+                imgBytes[i++] = imgByte;
+            }
+
+            return imgBytes;
+        }
+
+        return null;
+    }
 }

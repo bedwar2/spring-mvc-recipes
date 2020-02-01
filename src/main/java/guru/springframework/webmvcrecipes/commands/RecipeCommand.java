@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Lob;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,4 +25,6 @@ public class RecipeCommand {
     private Difficulty difficulty;
     private NotesCommand notes;
     private Set<CategoryCommand> categories = new HashSet<>();
+    @Lob  //BInary Large Object (BLOB)
+    private Byte[] image;
 }

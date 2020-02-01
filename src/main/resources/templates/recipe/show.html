@@ -31,17 +31,36 @@
                 <div class="card">
                     <div class="bg-primary card-header">
                         <!--/*@thymesVar id="recipe" type="guru.springframework.webmvcrecipes.domain.Recipe"*/-->
-                        <h1 class="card-title text-white" th:text="${recipe.getDescription()}">Recipe Description Here!</h1>
+                        <!-- h1 class="card-title text-white" th:text="${recipe.getDescription()}">Recipe Description Here!</h1 -->
+
+                        <div class="row">
+                            <div class="col-md-10">
+                                <h1 class="card-title text-white" th:text="${recipe.description}">Recipe Description Here!</h1>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="pull-right">
+                                        <a class="btn btn-secondary" href="#"
+                                           th:href="@{'/recipe/' + ${recipe.id} + '/image'}" role="button">Change Image</a>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
                                 <h5>Categories:</h5>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-md-3">
                                 <ul>
                                     <li  th:each="category : ${recipe.getCategories()}" th:text="${category.categoryName}">cat one</li>
                                 </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <img src="../../static/images/guacamole400x400WithX.jpg"
+                                     th:src="@{'/recipe/' + ${recipe.id} + '/recipeimage'}"
+                                     width="200">
                             </div>
                         </div>
                         <div class="row">
@@ -90,7 +109,16 @@
                 </div>
                 <div class="card">
                     <div class="bg-primary card-header">
-                        <h1 class="text-white card-title" >Ingredients</h1>
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                <h1 class="card-title text-white">Ingredients</h1>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-right">
+                                    <a class="btn btn-secondary text-white" href="#" th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" role="button">View</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
