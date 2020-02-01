@@ -1,6 +1,7 @@
 package guru.springframework.webmvcrecipes.controllers;
 
 import guru.springframework.webmvcrecipes.commands.RecipeCommand;
+import guru.springframework.webmvcrecipes.services.CategoryService;
 import guru.springframework.webmvcrecipes.services.ImageService;
 import guru.springframework.webmvcrecipes.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,16 +28,18 @@ public class RecipeController {
     private ImageService imageService;
     private ServletContext servletContext;
     private ResourceLoader resourceLoader;
+    private final CategoryService categoryService;
 
     @Value("classpath:/static/images/guacamole400x400WithX.jpg")
     private Resource defaultImage;
 
     public RecipeController(RecipeService recipeService, ImageService imageService,
-                            ServletContext servletContext, ResourceLoader resourceLoader) {
+                            ServletContext servletContext, ResourceLoader resourceLoader, CategoryService categoryService) {
         this.recipeService = recipeService;
         this.imageService = imageService;
         this.servletContext = servletContext;
         this.resourceLoader = resourceLoader;
+        this.categoryService = categoryService;
     }
 
     @RequestMapping("/{id}/show")
@@ -58,15 +60,24 @@ public class RecipeController {
     @GetMapping(value = "/{id}/update")
     public String updateRecipe(@PathVariable String id,  Model model) {
         model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
+        model.addAttribute("categories", categoryService.getAllCategoryCommands());
 
         return "recipe/recipeform";
     }
 
     @PostMapping(name = "/")
-    public String saveOrUpdate(@ModelAttribute RecipeCommand command) {
+    public String saveOrUpdate(@ModelAttribute RecipeCommand command,
+                               @RequestParam(value = "cats", required = false) String[] categoryIds) {
+        for (String categoryId : categoryIds) {
+            command.getCategories().add(categoryService.findCommandById(Long.valueOf(categoryId)));
+        }
+
         RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
+    //Object commandCopy = command;
+
 
         return "redirect:/recipe/" + savedCommand.getId() + "/show";
+        //return "redirect:/recipe/1/show";
     }
 
     @GetMapping(value = "/{id}/delete")

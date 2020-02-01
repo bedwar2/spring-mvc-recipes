@@ -27,4 +27,16 @@ public class RecipeCommand {
     private Set<CategoryCommand> categories = new HashSet<>();
     @Lob  //BInary Large Object (BLOB)
     private Byte[] image;
+
+    public Boolean hasCategory(Long categoryId) {
+        if (this.categories == null) {
+            return false;
+        }
+
+        if (this.categories.stream().filter(o -> o.getId() == categoryId).count() > 0) {
+            return true;
+        }
+
+        return false;
+    }
 }
