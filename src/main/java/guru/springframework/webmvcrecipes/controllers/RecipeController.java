@@ -1,6 +1,8 @@
 package guru.springframework.webmvcrecipes.controllers;
 
+import guru.springframework.webmvcrecipes.commands.ErrorCommand;
 import guru.springframework.webmvcrecipes.commands.RecipeCommand;
+import guru.springframework.webmvcrecipes.exceptions.NotFoundException;
 import guru.springframework.webmvcrecipes.services.CategoryService;
 import guru.springframework.webmvcrecipes.services.ImageService;
 import guru.springframework.webmvcrecipes.services.RecipeService;
@@ -9,10 +11,12 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -120,5 +124,34 @@ public class RecipeController {
             InputStream is = defaultImage.getInputStream();
             IOUtils.copy(is, response.getOutputStream());
         }
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ModelAndView handleNotFound(NotFoundException ex) {
+        log.error("Handle not found Exception");
+        ErrorCommand ec = ErrorCommand.builder().ex(ex).statusCode(HttpStatus.NOT_FOUND).build();
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("error", ec);
+        modelAndView.setViewName("ApplicationError");
+
+        return modelAndView;
+
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ModelAndView handleNumberFormatException(NumberFormatException nfe) {
+        log.error("Handling Number format exception");
+        ErrorCommand ec = ErrorCommand.builder().ex(nfe).statusCode(HttpStatus.BAD_REQUEST).build();
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("error", ec);
+        modelAndView.setViewName("ApplicationError");
+
+        return modelAndView;
+
+
     }
 }
